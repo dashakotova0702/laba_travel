@@ -4,12 +4,17 @@ using namespace std;
 
 class tours {
 public:
-  void setTours(fstream& namefile);
-  void read(fstream& namefile);
-  void reserv(fstream& namefile);
-  void del(fstream& namefile);
-  void search(fstream& namefile);
-  int menu();
+  void setTours(fstream& file);
+  void read(fstream& file);
+  void reserv(fstream& file);
+  void del(fstream& file, string namefile);
+  void search(fstream& file);
+  void s1(fstream& file);
+  void s2(fstream& file);
+  void s3(fstream& file);
+  void s4(fstream& file);
+  void s5(fstream& file);
+  void s6(fstream& file);
   friend ostream& operator<< (ostream &out, const tours &t) {
     out << t.country << ' ' << t.town << ' ' << t.hotel << " Звезд: " << t.stars << " Мест в отеле: " << t.places << " Свободных мест: " << t.freeplaces << endl;
     return out;
