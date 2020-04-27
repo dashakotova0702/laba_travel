@@ -6,7 +6,7 @@ class tours {
 public:
   void setTours(fstream& file);
   void read(fstream& file);
-  void reserv(fstream& file);
+  void reserv(fstream& file, string namefile);
   void del(fstream& file, string namefile);
   void search(fstream& file);
   void s1(fstream& file);
@@ -30,14 +30,13 @@ public:
     in >> t.stars;
     cout << "Сколько мест в отеле: " << endl;
     in >> t.places;
-    cout << "Сколько свободных мест в отеле: " << endl;
-    in >> t.freeplaces;
+    t.freeplaces = t.places;
     return in;
   }
 private:
-  string country;
-  string town;
-  string hotel;
+  char country[20];
+  char town[20];
+  char hotel[20];
   int stars;
   int places;
   int freeplaces;

@@ -14,13 +14,13 @@ int main(int argc, char const *argv[]) {
   string namefile = argv[1];
   int choice;
   for(;;) {
-    tours* t = new tours;
     fstream file;
     file.open(namefile, ios::binary | ios::app | ios::in);
     if (!(file.is_open())){
       cout << "Ошибка открытия файла" << endl;
       return 1;
     }
+    tours* t = new tours;
     choice = menu();
     switch(choice) {
       case 1:
@@ -43,9 +43,11 @@ int main(int argc, char const *argv[]) {
         file.close();
         delete t;
 				break;
-/*			case 5:
-        t->reserv(file);
-				break;*/
+			case 5:
+        t->reserv(file, namefile);
+        file.close();
+        delete t;
+				break;
 			case 6:
         exit (0);
 			default:
@@ -64,6 +66,8 @@ void tours::search(fstream& file){
   tours t;
   int choice;
   for(;;) {
+    file.clear();
+    file.seekg(0);
     choice = searchmenu();
     switch(choice) {
       case 1:

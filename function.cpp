@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <string.h>
 #include "base.h"
 using namespace std;
 
@@ -8,6 +8,7 @@ void tours::setTours(fstream& file) {
   tours t;
   cin >> t;
   file.write((char*)&t, sizeof (tours));
+  cout << "Вы успешно записали тур" << endl;
 }
 
 void tours::read(fstream& file) {
@@ -26,9 +27,8 @@ void tours::s1(fstream& file){
   char parameter[20];
   cout << "Туры в какую страну вывести? " << endl;
   cin >> parameter;
-  cout << parameter;
   while (file.read((char*)&t, sizeof (tours))) {
-    if (parameter == t.country)  {
+    if (strcmp(parameter, t.country) == 0)  {
       cout << t;
     }
   }
@@ -36,12 +36,11 @@ void tours::s1(fstream& file){
 
 void tours::s2(fstream& file){
   tours t;
-  string parameter, town;
-  town = t.town;
+  char parameter[20];
   cout << "Туры в какой город вывести?" << endl;
   cin >> parameter;
   while (file.read((char*)&t, sizeof (tours))) {
-    if (parameter == town) {
+    if (strcmp(parameter, t.town) == 0) {
       cout << t;
     }
   }
@@ -49,12 +48,11 @@ void tours::s2(fstream& file){
 
 void tours::s3(fstream& file){
   tours t;
-  string parameter, hotel;
-  hotel = t.hotel;
+  char parameter[20];
   cout << "Туры в какой отель вывести?" << endl;
   cin >> parameter;
   while (file.read((char*)&t, sizeof (tours))) {
-    if (parameter == hotel) {
+    if (strcmp(parameter, t.hotel) == 0) {
       cout << t;
     }
   }
@@ -82,7 +80,6 @@ void tours::s5(fstream& file){
       cout << t;
     }
   }
-  file.close();
 }
 
 void tours::s6(fstream& file){
@@ -98,33 +95,77 @@ void tours::s6(fstream& file){
 }
 
 void tours::del(fstream& file, string namefile) {
-  fstream f;
-  f.open("f.bin", ios::binary | ios::out);
-  tours t;
-  string parameter, hotel;
-  int i;
-  int count1 = 0;
-  int count2 = 0;
-  cout << "В какой отель тур удалить?: " << endl;
-  cin >> parameter;
-  while (file.read((char*)&t, sizeof (tours))) {
-    hotel = t.hotel;
-    if (parameter != hotel) {
-      f.write((char*)&t, sizeof (t));
-      count2++;
-      }
-  }
-  if (f.eof()){
+  if (file.eof()) {
+    cout << "Файл пуст" << endl;
     return;
   }
-  i = 0;
-  for (i = 0; i < count2-1; i++){
-    file.close();
-    fstream file;
-    file.open(namefile, ios::binary | ios::out);
-    f.read((char*)&t, sizeof (t));
-    file.write((char*)&t, sizeof (t));
+  int i = 0, size = 0;
+  char parameter[20];
+  file.clear();
+  file.seekg(0);
+  tours count;
+  while (file.read((char*)&count, sizeof (count))) {
+    size++;
   }
-  f.close();
-  remove("f.bin");
+  tours* t = new tours[size];
+  file.clear();
+  file.seekg(0);
+  cout << "Тур в какой отель удалить?: " << endl;
+  cin >> parameter;
+  for (i = 0; i < size; i++) {
+    file.read((char*)&t[i], sizeof (t[i]));
+  }
+  file.close();
+  file.open(namefile, ios_base::binary | ios_base::out | ios_base::trunc);
+  for (i = 0; i < size; i++) {
+    if (strcmp(parameter, t[i].hotel) != 0) {
+      file.write((char*)&t[i], sizeof (t[i]));
+    }
+  }
+  cout << "Вы успешно удалили тур" << endl;
+  delete []t;
+}
+
+void tours::reserv(fstream& file, string namefile) {
+  if (file.eof()) {
+    cout << "Файл пуст" << endl;
+    return;
+  }
+  int i = 0, size = 0, reserv_places;
+  char parameter[20];
+  tours count;
+  file.clear();
+  file.seekg(0);
+  while (file.read((char*)&count, sizeof (count))) {
+    size++;
+  }
+  tours* t = new tours[size];
+  file.clear();
+  file.seekg(0);
+  for (i = 0; i < size; i++) {
+    file.read((char*)&t[i], sizeof (t[i]));
+  }
+  file.close();
+  file.open(namefile, ios_base::binary | ios_base::out | ios_base::trunc);
+  cout << "Какой отель хотите забронировать?: " << endl;
+  cin >> parameter;
+  cout << "Сколько мест забронировать?: " << endl;
+  cin >> reserv_places;
+  for (i = 0; i < size; i++) {
+    if (strcmp(parameter, t[i].hotel) == 0) {
+      if (t[i].freeplaces < reserv_places) {
+        cout << "В отеле нет столько мест. Ошибка" << endl;
+        file.write((char*)&t[i], sizeof (t[i]));
+      }
+      else {
+        cout << "Вы успешно забронировали отель" << endl;
+        t[i].freeplaces -= reserv_places;
+        file.write((char*)&t[i], sizeof (t[i]));
+      }
+    }
+    else {
+      file.write((char*)&t[i], sizeof (t[i]));
+    }
+  }
+  delete []t;
 }

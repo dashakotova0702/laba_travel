@@ -1,22 +1,14 @@
-files=function.o main.o searchfunc.o menufunc.o
-target=laba3
+CC=g++
+CFLAGS=-c -Wall
+LDFLAGS=
+SOURCES=main.cpp function.cpp menu.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=laba1
 
-all: $(target)
+all: $(SOURCES) $(EXECUTABLE)
 
-searchfunc.o: searchfunc.c
-	gcc searchfunc.c -g -c -o searchfunc.o
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-menufunc.o: menufunc.c
-	gcc menufunc.c -g -c -o menufunc.o
-
-main.o: main.c
-	gcc main.c -g -c -o main.o
-
-function.o: function.c
-	gcc function.c -g -c -o function.o
-
-$(target): $(files)
-	gcc $(files) -o $(target) -g
-
-clean:
-	rm -rf $(files)
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
